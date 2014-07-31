@@ -35,68 +35,43 @@ window.findNRooksSolution = function(n, startingPos) {
 };
 
 
-
-
-
-
-
-
-
 // return the number of nxn chessboards 'that' exist, with n rooks
 
 // placed such that none of them can attack each other
 window.countNRooksSolutions = function(n) {
   var solutionCount = 0;
-  var possibleBoards = [];
-  var baseRows = [[1, 0, 0, 0], [0, 1, 0, 0], [0, 0, 1, 0], [0, 0, 0, 1]];
-  var finalBoards = [];
-  var newBoard = [];
 
-
-//  9pm Wed game plan:
-//
-// loop through possibleBoards
-// append baseRows[1] to each element
-// copy magic
-// append baseRows[2] to each element (that came from copy magic)
-// concatenate the two different arrays
-// set that concatenation equal to possibleBoards
-// call/do above a total of n times
-
-debugger;
-        for(var i = 0; i < baseRows.length; i++){
-          newBoard = [];
-          newBoard.push(baseRows[i]);
-          possibleBoards.push(newBoard);
-        };
-        for( var k = 1; k < n; k++ ){
-
-          // for each element in possibleBoards
-          // append baseRows[i]
-          for( var i = 0; i < possibleBoards.length; i++ ){
-            for( var j = 0; j < baseRows.length; j++ ){
-              possibleBoards[i].push(baseRows[j]);
-            };
-          };
-
-        };
-
-
-
-//   for( var i = 0; i < n; i++){
-//     for( var j = 0; j < n; j++){
-//       for( var k = 0; k < n; k++){
-//         for( var l = 0; l < n; l++){
-//           possibleBoards.push(new Board([baseRows[i], baseRows[j], baseRows[k], baseRows[l]]));
-//         }
-//       }
-//     }
-//   }
-  for( var i = 0; i < finalBoards.length; i++ ){
-    if( !finalBoards[i].hasAnyRowConflicts() && !finalBoards[i].hasAnyColConflicts() ){
-      solutionCount++;
+//make new empty board
+var board = new Board({'n':n});
+var rookCounter = 0;
+//call function
+var makePlacements = function(){
+  //loop across n
+  for(var i = 0; i < n; i++){
+    //make placement
+    board.togglePiece(rookCounter, i);
+    //check if valid
+    if(board.hasAnyRooksConflicts()){
+      //yes: try next
+      board.togglePiece(rookCounter, i);
+    }else{
+    //no: keep, increase counter
+      rookCounter++;
+      //check if last placement
+      if(rookCounter === n){
+        //yes: push board to finalBoards
+        solutionCount++;
+      }else{
+        //call again
+        makePlacements();
+      }
+        rookCounter--;
+        board.togglePiece(rookCounter, i);
     }
   }
+}
+makePlacements();
+
 
   console.log('Number of solutions for ' + n + ' rooks:', solutionCount);
   return solutionCount;
