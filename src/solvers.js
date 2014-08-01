@@ -42,35 +42,27 @@ window.countNRooksSolutions = function(n) {
   var solutionCount = 0;
 
   //make new empty board
-  var board = new Board({'n':n});
-  var rookCounter = 0;
-  //call function
-  var makePlacements = function(){
-    //loop across n
-    for(var i = 0; i < n; i++){
-      //make placement
-      board.togglePiece(rookCounter, i);
-      //check if valid
-      if(board.hasAnyRooksConflicts()){
-        //yes: try next
-        board.togglePiece(rookCounter, i);
-      }else{
-      //no: keep, increase counter
-        rookCounter++;
-        //check if last placement
-        if(rookCounter === n){
-          //yes: push board to finalBoards
-          solutionCount++;
-        }else{
-          //call again
-          makePlacements();
-        }
-          rookCounter--;
-          board.togglePiece(rookCounter, i);
-      }
+  var board = new Board({n:n});
+
+  var makePlacement = function(row) {
+    if(row === n){
+      return solutionCount++;
     }
-  }
-  makePlacements();
+    // iterate through the row
+    for(var i = 0; i < n; i++){
+      // place a queen
+      board.togglePiece(row, i);
+
+      // check if valid
+      if(!board.hasAnyRooksConflicts()){
+        // if no -> return to previous
+        makePlacement(row + 1);
+      }
+      // remove placement
+      board.togglePiece(row, i);
+    }
+  };
+  makePlacement(0);
 
 
   console.log('Number of solutions for ' + n + ' rooks:', solutionCount);

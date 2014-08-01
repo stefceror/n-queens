@@ -82,9 +82,11 @@
       // expect each row(array) to have at most one item
       var conflicts = 0;
       for( var i = 0; i < this._currentAttributes[rowIndex].length; i++ ){
-        console.log(this._currentAttributes[rowIndex][i]);
         if( this._currentAttributes[rowIndex][i] === 1 ){
           conflicts++;
+          if(conflicts > 1){
+            break;
+          }
         }
       }
       return (conflicts > 1) ? true : false;
@@ -94,15 +96,15 @@
     hasAnyRowConflicts: function() {
       var conflicts = false;
       for( var i in this._currentAttributes ){
+        if( conflicts ){
+          break;
+        }
         if( Array.isArray(this._currentAttributes[i]) ){
-          if( conflicts ){
-            break;
-          }else{
             conflicts = this.hasRowConflictAt(i);
           }
         }
-      }
-      return conflicts; // fixme
+
+      return conflicts;
     },
 
 
@@ -116,6 +118,9 @@
       for( var i in this._currentAttributes ){
         if( this._currentAttributes[i][colIndex] === 1 ){
           conflicts++;
+          if(conflicts > 1){
+            break;
+          }
         }
       }
       return (conflicts > 1) ? true : false;
